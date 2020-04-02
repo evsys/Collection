@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+@model List<Collection.Models.CollectionDb>
+
+@if (Model.Count == 0)
+{
+    <p class="text-danger m-2">У вас пока нет коллекций</p>
+}
+else
+{
+    <table class="table .table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">Название коллекции</th>
+                <th scope="col">Описание коллекции</th>
+                <th scope="col">Тема</th>
+                <th scope="col">Картинка</th>
+                <th scope="col">Редактировать</th>
+                <th scope="col">Удалить</th>
+                <th scope="col">Перейти</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var collectionDb in Model)
+            {
+                <tr>
+                    <th scope="row">@collectionDb.Name</th>
+                    <td>@collectionDb.Description</td>
+                    <td>@collectionDb.Theme</td>
+                    <td>@collectionDb.Image</td>
+                    <td>
+                        <button class="btn btn-danger editCollection"
+                                collectionId="@collectionDb.Id"
+                                collectionFields="@collectionDb.Fields"
+                                collectionName="@collectionDb.Name"
+                                collectionDescription="@collectionDb.Description"
+                                data-toggle="modal" data-target="#editCollection">
+                            Редактировать
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger deleteCollection"
+                                collectionId="@collectionDb.Id"
+                                data-toggle="modal" data-target="#deleteCollection">
+                            Удалить
+                        </button>
+                    </td>
+                    <td>
+                        <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@collectionDb.Id">
+                            <button class="btn btn-primary">Перейти</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+    <div class='modal fade' id='create' tabindex="-1" role="dialog"
+         aria-labelledby="createCollection" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered " role="document">
+            <div class="modal-content text-white bg-dark">
+                <div class="modal-header ">
+                    <h5 class="modal-title " id="ModalLabel">Создание коллекции</h5>
+                    <button class="close autorization" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <form name="loginForm" method="post">
+                            <input type="text" name="nicknameUser" id="nicknameUser" class="d-none">
+                            <div class="form-group">
+                                <label for="nameCollection">Название коллекции</label>
+                                <input type="text" name="nameCollection" class="form-control" id="nameCollection"
+                                       placeholder="Название" aria-describedby="emailHelp">
+                            </div>
+
+                            <label for="description">Описание</label>
+                            <div class="form-group">
+                                <textarea id="description" rows="3" cols="35" name="description"></textarea>
+                            </div>
+                            <button asp-controller="Home" asp-action="CreateCollection"
+                                    class="btn btn-primary m-2" name="userId" value="@ViewBag.Name">
+                                Сохранить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <button class="btn btn-primary m-2" data-toggle="modal" data-target="#create">Создать коллекцию</button>

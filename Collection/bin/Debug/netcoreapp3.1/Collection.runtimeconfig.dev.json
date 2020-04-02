@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\mmorf\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\mmorf\\.nuget\\packages"
+    ]
+  }
+}

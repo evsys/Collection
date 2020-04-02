@@ -1,0 +1,121 @@
+﻿@{
+    @model List<Collection.Models.Item>
+    ViewData["Title"] = "Коллекция " + Model[0].Collection.Name;
+    ViewBag.FullAccess = false;
+    @if (ViewBag.AutorizeUser != null)
+    {
+        if (ViewBag.AutorizeUser.Nickname == ViewBag.OwnerCollections.Nickname)
+        {
+            ViewBag.FullAccess = true;
+        }
+    }
+}
+
+@if (Model.Count == 1 && Model[0].Id == 0)
+{
+    <p class="text-danger m-2">В коллекции пока нет элементов</p>
+}
+else
+{
+    <table class="table table-responsive-sm table-bordered table-hover" id="sortedTable">
+        <thead>
+            <tr>
+                <th scope="col" onclick='sortTable(0)'>Название элемента</th>
+                <th scope="col">#Теги</th>
+                @for (int i = 0; i < Model[0].Collection.FormattedFields.Count; i++)
+                {
+                    <th scope="col" onclick='sortTable(@i+2)'>@Model[0].Collection.FormattedFields[i].Name</th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th scope="row">@item.Name</th>
+                    <th scope="row">@item.Tegs</th>
+
+                    
+                        <td>
+                            <button class="btn btn-danger editItem"
+                                    idItem="@item.Id"
+                                    valuesItem="@item.Values"
+                                    nameItem="@item.Name"
+                                    tegsItem="@item.Tegs"
+                                    data-toggle="modal" data-target="#editItem">
+                                Редактировать
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger deleteItem"
+                                    idItem="@item.Id"
+                                    data-toggle="modal" data-target="#deleteItem">
+                                Удалить
+                            </button>
+                        </td>
+                   
+
+                    <td>
+                        <form asp-controller="Home" asp-action="Item" asp-route-id="@item.Id">
+                            <button class="btn btn-primary">Перейти</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class='modal fade' id='createItem' tabindex="-1" role="dialog"
+     aria-labelledby="createCollection" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title " id="ModalLabel">Создание элемента</h5>
+                <button class="close autorization" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form name="loginForm" method="post">
+                        <input name="idCollection" value="@Model[0].Collection.Id" class="d-none">
+                        <div class="form-group">
+                            <label for="nameCollection">Название элемента</label>
+                            <input type="text" name="itemName" class="form-control" placeholder="Название">
+                        </div>
+                        <input type="text" class="form-control" id="oneTag" placeholder="Введите Тэг">
+                        <button id="addTeg" class="btn btn-primary mt-2">Добавить Тэг</button>
+                        <p>Тэги</p>
+                        <input type="text" name="tegs" id="allTegs" class="form-control" readonly>
+                        @if (Model[0].Collection.FormattedFields.Count != 0)
+                        {
+                            <p>Заполните поля</p>
+                        }
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                            <button asp-controller="Home" asp-action="CreateItem"
+                                    class="btn btn-primary m-2">
+                                Сохранить
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <button class="btn btn-primary m-2" data-toggle="modal" data-target="#createItem">Добавить элемент</button>
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="~/js/sort.js"></script>
+<script src="~/js/jquery-ui.min.js"></script>
+<script src="~/js/ItemPage.js"></script>
+
+

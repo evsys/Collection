@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IEnumerable<Collection.Models.User>
+
+
+    <table class="table">
+            @foreach (var user in Model)
+            {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    <a class="nav-link text-dark" asp-controller="Home" asp-action="UserPage" asp-route-userid="@user.Id">Перейти</a>
+                </td>
+            </tr>
+            }
+    </table>    
