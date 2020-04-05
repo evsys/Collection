@@ -73,3 +73,5 @@ C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\n
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\netcoreapp3.1\Collection.csproj.CopyComplete
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\netcoreapp3.1\Collection.dll
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\netcoreapp3.1\Collection.pdb
+C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\netcoreapp3.1\Razor\Views\Home\AllUsers.cshtml.g.cs
+C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Release\netcoreapp3.1\Razor\Views\Home\Item.cshtml.g.cs

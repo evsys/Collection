@@ -11,8 +11,8 @@ namespace Collection
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string adminEmail = "admin@admin.com";
-            string password = "admincore";
+            string adminEmail = "mmorfiys@gmail.com";
+            string password = "hostloh";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
