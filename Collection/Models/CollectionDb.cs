@@ -14,7 +14,7 @@ namespace Collection.Models
             Name = name;
             Description = description; 
             Theme = theme;
-            Image = "path";
+            Image = "В разработке";
         }
 
         [Key]

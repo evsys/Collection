@@ -10,7 +10,7 @@
 }
 else
 {
-<h2 class="text-info ml-2">Последние добавленные элементы</h2>
+<h3 class="text-info ml-2 text-dark">Последние добавленные элементы</h3>
 
 <table class="table table-responsive">
     <thead>
@@ -37,63 +37,79 @@ else
             <th scope="col"></th>
             <th scope="col"></th>
             <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <th scope="row">@item.Name</th>
-                <th scope="row">@item.Tegs</th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <th scope="row"></th>
-                <td>
-                    <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@item.IdCollection">
-                        <button class="btn btn-primary">
-                            Коллекция
-                        </button>
-                    </form>
-                </td>
-                <td>
-                    <form asp-controller="Home" asp-action="UserPage" asp-route-userName="@User.Identity.Name">
-                        <button class="btn btn-primary">
-                            Пользователь
-                        </button>
-                    </form>
-                </td>
-            </tr>
+        <tr>
+            <th scope="row">@item.Name</th>
+            <th scope="row">@item.Tegs</th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <th scope="row"></th>
+            <td>
+                <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@item.IdCollection">
+                    <button class="btn btn-primary">
+                        Коллекция
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form asp-controller="Home" asp-action="UserPage" asp-route-userName="@User.Identity.Name">
+                    <button class="btn btn-primary">
+                        Пользователь
+                    </button>
+                </form>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
 }
 
-<h2 class="text-info ml-2">Коллекции с наибольшим количеством элементов</h2>
+<br/>
+
+<h3 class="text-info ml-2 text-dark">Коллекции с наибольшим количеством элементов</h3>
 
 <table class="table table-responsive">
     <thead>
         <tr>
             <th scope="col">Название коллекции</th>
-            <th scope="col">Описание коллекции</th>
-            <th scope="col">Тема</th>
-            <th scope="col">Количество элементов</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
+            <th>Описание коллекции</th>
+            <th>Тема</th>
+            <th>Количество элементов</th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>

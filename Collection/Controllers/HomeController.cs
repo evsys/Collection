@@ -82,8 +82,6 @@ namespace Collection.Controllers
 
         public async Task<IActionResult> Item(int id) 
         {
-            User user = await _userManager.FindByNameAsync(User.Identity.Name);
-
             Item item = await db.Items.FirstOrDefaultAsync(x => x.Id == id);
             CollectionDb collection = await db.CollectionDbs.FirstOrDefaultAsync(x => x.Id == item.IdCollection);
 
@@ -120,7 +118,6 @@ namespace Collection.Controllers
             return RedirectToAction("UserPage", "Home", new { userName = ownerCollection.Email });
         }
 
-        [HttpPost]
         public async Task<IActionResult> DeleteCollection(int idCollection)
         {
             CollectionDb collectionDb = await db.CollectionDbs.FirstOrDefaultAsync(x => x.Id == idCollection);
