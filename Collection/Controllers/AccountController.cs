@@ -62,7 +62,7 @@ namespace Collection.Controllers
             if (ModelState.IsValid)
             {
                 var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                    await _signInManager.PasswordSignInAsync(model.Email, model.Password,false, false);
                 if (result.Succeeded)
                 {
                     // проверяем, принадлежит ли URL приложению

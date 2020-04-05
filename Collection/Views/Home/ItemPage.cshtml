@@ -1,13 +1,10 @@
 ﻿@{
     @model List<Collection.Models.Item>
     ViewData["Title"] = "Коллекция " + Model[0].Collection.Name;
-    ViewBag.FullAccess = false;
-    @if (ViewBag.AutorizeUser != null)
+    ViewBag.Owner = false;
+    @if (User.Identity.Name == ViewBag.OwnerName.Email)
     {
-        if (ViewBag.AutorizeUser.Nickname == ViewBag.OwnerCollections.Nickname)
-        {
-            ViewBag.FullAccess = true;
-        }
+        ViewBag.Owner = true;
     }
 }
 
@@ -17,15 +14,17 @@
 }
 else
 {
-    <table class="table table-responsive-sm table-bordered table-hover" id="sortedTable">
+    <table class="table .table-responsive">
         <thead>
             <tr>
                 <th scope="col" onclick='sortTable(0)'>Название элемента</th>
                 <th scope="col">#Теги</th>
-                @for (int i = 0; i < Model[0].Collection.FormattedFields.Count; i++)
+                @for (int i = 0; i < 3; i++)
                 {
-                    <th scope="col" onclick='sortTable(@i+2)'>@Model[0].Collection.FormattedFields[i].Name</th>
+                    <th scope="col">@Model[0].Collection.FormattedFields[i].Name</th>
                 }
+                <th scope="col"></th>
+                <th scope="col"></th>
 
             </tr>
         </thead>
@@ -35,18 +34,44 @@ else
                 <tr>
                     <th scope="row">@item.Name</th>
                     <th scope="row">@item.Tegs</th>
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        var field = Model[0].Collection.FormattedFields[i];
 
-                    
-                        <td>
-                            <button class="btn btn-danger editItem"
-                                    idItem="@item.Id"
-                                    valuesItem="@item.Values"
-                                    nameItem="@item.Name"
-                                    tegsItem="@item.Tegs"
-                                    data-toggle="modal" data-target="#editItem">
-                                Редактировать
-                            </button>
-                        </td>
+                        @if (field.Type == "Числовой")
+                        {
+                            <th scope="row"><input type="number" readonly value="@item.FormattedValues[i]"></th>
+                        }
+
+                        @if (field.Type == "Строковый")
+                        {
+                            <th scope="row"><input type="text" readonly value="@item.FormattedValues[i]"></th>
+                        }
+
+                        @if (field.Type == "Текстовый")
+                        {
+                            <th scope="row"><textarea readonly>@item.FormattedValues[i]</textarea></th>
+                        }
+
+                        @if (field.Type == "Дата")
+                        {
+                            <th scope="row"><input type="datetime" readonly value="@item.FormattedValues[i]"></th>
+                        }
+
+                        @if (field.Type == "Логический")
+                        {
+                            @if (@item.FormattedValues[i] == "on")
+                            {
+                                <th scope="row"><input type="checkbox" disabled checked></th>
+                            }
+                            else
+                            {
+                                <th scope="row"><input type="checkbox" disabled></th>
+                            }
+                        }
+                    }
+                    @if (ViewBag.Owner)
+                    {
                         <td>
                             <button class="btn btn-danger deleteItem"
                                     idItem="@item.Id"
@@ -54,7 +79,7 @@ else
                                 Удалить
                             </button>
                         </td>
-                   
+                    }
 
                     <td>
                         <form asp-controller="Home" asp-action="Item" asp-route-id="@item.Id">
@@ -73,9 +98,6 @@ else
         <div class="modal-content">
             <div class="modal-header ">
                 <h5 class="modal-title " id="ModalLabel">Создание элемента</h5>
-                <button class="close autorization" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -83,23 +105,55 @@ else
                         <input name="idCollection" value="@Model[0].Collection.Id" class="d-none">
                         <div class="form-group">
                             <label for="nameCollection">Название элемента</label>
-                            <input type="text" name="itemName" class="form-control" placeholder="Название">
+                            <input type="text" name="itemName" class="form-control" placeholder="Название" required>
                         </div>
                         <input type="text" class="form-control" id="oneTag" placeholder="Введите Тэг">
                         <button id="addTeg" class="btn btn-primary mt-2">Добавить Тэг</button>
                         <p>Тэги</p>
                         <input type="text" name="tegs" id="allTegs" class="form-control" readonly>
-                        @if (Model[0].Collection.FormattedFields.Count != 0)
+                        <p>Заполните поля</p>
+                        @for (var i = 0; i < 3; i++)
                         {
-                            <p>Заполните поля</p>
+                            var field = Model[0].Collection.FormattedFields[i];
+
+                            <label>@field.Name</label>
+                            <div class="form-group">
+
+                                @if (field.Type == "Числовой")
+                                {
+                                    <input type="number" name="itemValue" required>
+                                }
+
+                                @if (field.Type == "Строковый")
+                                {
+                                    <input type="text" name="itemValue" required>
+                                }
+
+                                @if (field.Type == "Текстовый")
+                                {
+                                    <textarea name="itemValue" required></textarea>
+                                }
+
+                                @if (field.Type == "Дата")
+                                {
+                                    <input type="date" name="itemValue" required>
+                                }
+
+                                @if (field.Type == "Логический")
+                                {
+                                    <input class="d-none" type="text" name="itemValue" value="off">
+                                    <input type="checkbox">
+                                }
+                            </div>
                         }
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-                            <button asp-controller="Home" asp-action="CreateItem"
-                                    class="btn btn-primary m-2">
-                                Сохранить
-                            </button>
-                        </div>
+                    <div class="modal-footer justify-content-center">
+                        <button asp-controller="Home" asp-action="CreateItem" class="btn btn-primary m-2">
+                            Сохранить
+                        </button>
+                        <button type="button" class="btn btn-secondary m-2" data-dismiss="modal">
+                            Отмена
+                        </button>
+                    </div>
 
                     </form>
                 </div>
@@ -108,14 +162,33 @@ else
     </div>
 </div>
 
+<div class='modal fade' id='deleteItem' tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content" >
+            <div class="modal-header ">
+                <h5 class="modal-title">Удаление элемента</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">Вы уверены, что хотите удалить элемент?</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <form asp-controller="Home" asp-action="DeleteItem" method="post">
+                    <input name="idItem" id="ItemDelete" class="d-none">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-
+@if (ViewBag.Owner)
+{
     <button class="btn btn-primary m-2" data-toggle="modal" data-target="#createItem">Добавить элемент</button>
-
-
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="~/js/sort.js"></script>
-<script src="~/js/jquery-ui.min.js"></script>
+}
 <script src="~/js/ItemPage.js"></script>
 
 

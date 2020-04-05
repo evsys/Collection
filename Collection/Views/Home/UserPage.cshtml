@@ -1,12 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Личный кабинет";
-}
 
 @model List<Collection.Models.CollectionDb>
+    ViewBag.Owner = false;
+    @if (User.Identity.Name == ViewBag.OwnerName)
+    {
+        ViewBag.Owner = true;
+    }
+}
 
 @if (Model.Count == 0)
 {
-    <p class="text-danger m-2">У вас пока нет коллекций</p>
+    <p class="text-danger m-2">Коллекций нет</p>
 }
 else
 {
@@ -17,9 +22,8 @@ else
                 <th scope="col">Описание коллекции</th>
                 <th scope="col">Тема</th>
                 <th scope="col">Картинка</th>
-                <th scope="col">Редактировать</th>
-                <th scope="col">Удалить</th>
-                <th scope="col">Перейти</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -31,23 +35,16 @@ else
                     <td>@collectionDb.Description</td>
                     <td>@collectionDb.Theme</td>
                     <td>@collectionDb.Image</td>
-                    <td>
-                        <button class="btn btn-danger editCollection"
-                                collectionId="@collectionDb.Id"
-                                collectionFields="@collectionDb.Fields"
-                                collectionName="@collectionDb.Name"
-                                collectionDescription="@collectionDb.Description"
-                                data-toggle="modal" data-target="#editCollection">
-                            Редактировать
-                        </button>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger deleteCollection"
-                                collectionId="@collectionDb.Id"
-                                data-toggle="modal" data-target="#deleteCollection">
-                            Удалить
-                        </button>
-                    </td>
+                    @if (ViewBag.Owner)
+                    {
+                        <td>
+                            <button class="btn btn-danger deleteCollection"
+                                    collectionId="@collectionDb.Id"
+                                    data-toggle="modal" data-target="#deleteCollection">
+                                Удалить
+                            </button>
+                        </td>
+                    }
                     <td>
                         <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@collectionDb.Id">
                             <button class="btn btn-primary">Перейти</button>
@@ -58,40 +55,136 @@ else
         </tbody>
     </table>
 }
-    <div class='modal fade' id='create' tabindex="-1" role="dialog"
-         aria-labelledby="createCollection" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered " role="document">
-            <div class="modal-content text-white bg-dark">
-                <div class="modal-header ">
-                    <h5 class="modal-title " id="ModalLabel">Создание коллекции</h5>
-                    <button class="close autorization" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <form name="loginForm" method="post">
-                            <input type="text" name="nicknameUser" id="nicknameUser" class="d-none">
-                            <div class="form-group">
-                                <label for="nameCollection">Название коллекции</label>
-                                <input type="text" name="nameCollection" class="form-control" id="nameCollection"
-                                       placeholder="Название" aria-describedby="emailHelp">
+<div class='modal fade' id='create' tabindex="-1" role="dialog"
+     aria-labelledby="createCollection" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title " id="ModalLabel">Создание коллекции</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form name="loginForm" method="post">
+                        <input type="text" name="NameUser" value="@ViewBag.OwnerName" class="d-none">
+                        <div class="form-group">
+                            <label for="nameCollection">Название коллекции</label>
+                            <input type="text" name="nameCollection" class="form-control" id="nameCollection" placeholder="Название" required>
+                        </div>
+                        <label for="description">Описание</label>
+                        <div class="form-group">
+                            <input id="description" name="description" class="form-control" placeholder="Описание" required>
+                        </div>
+                        <label for="theme">Тема</label>
+                        <div class="form-group">
+                            <input id="theme" name="theme" class="form-control" placeholder="Тема" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Название поля</label>
                             </div>
-
-                            <label for="description">Описание</label>
-                            <div class="form-group">
-                                <textarea id="description" rows="3" cols="35" name="description"></textarea>
+                            <div class="col-4">
+                                <label>Тип поля</label>
                             </div>
-                            <button asp-controller="Home" asp-action="CreateCollection"
-                                    class="btn btn-primary m-2" name="userId" value="@ViewBag.Name">
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" name="nameField" class="form-control" placeholder="Название" required>
+                            </div>
+                            <div class="col-4">
+                                <select name="typeField" class="form-control">
+                                    <option>Числовой</option>
+                                    <option>Строковый</option>
+                                    <option>Текстовый</option>
+                                    <option>Дата</option>
+                                    <option>Логический</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Название поля</label>
+                            </div>
+                            <div class="col-4">
+                                <label>Тип поля</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" name="nameField" class="form-control" placeholder="Название" required>
+                            </div>
+                            <div class="col-4">
+                                <select name="typeField" class="form-control">
+                                    <option>Числовой</option>
+                                    <option>Строковый</option>
+                                    <option>Текстовый</option>
+                                    <option>Дата</option>
+                                    <option>Логический</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Название поля</label>
+                            </div>
+                            <div class="col-4">
+                                <label>Тип поля</label>
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-4">
+                                <input type="text" name="nameField" class="form-control" placeholder="Название" required>
+                            </div>
+                            <div class="col-4">
+                                <select name="typeField" class="form-control">
+                                    <option>Числовой</option>
+                                    <option>Строковый</option>
+                                    <option>Текстовый</option>
+                                    <option>Дата</option>
+                                    <option>Логический</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="modal-footer justify-content-center">
+                            <button asp-controller="Home" asp-action="CreateCollection" class="btn btn-primary m-2">
                                 Сохранить
                             </button>
-                        </form>
-                    </div>
+                            <button type="button" class="btn btn-secondary m-2" data-dismiss="modal">
+                                Отмена
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<div class='modal fade' id='deleteCollection' tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title">Удаление коллекции</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">Вы уверены, что хотите удалить коллекцию?</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <form asp-controller="Home" asp-action="DeleteCollection" method="post">
+                    <input name="idCollection" id="idCollection" class="d-none">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
+@if (ViewBag.Owner)
+{
     <button class="btn btn-primary m-2" data-toggle="modal" data-target="#create">Создать коллекцию</button>
+}
+    <script src="~/js/UserPage.js"></script>

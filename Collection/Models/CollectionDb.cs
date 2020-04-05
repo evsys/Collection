@@ -9,12 +9,12 @@ namespace Collection.Models
 {
     public class CollectionDb
     {
-        public CollectionDb(string name, string description)
+        public CollectionDb(string name, string description, string theme)
         {
             Name = name;
-            Description = description;
+            Description = description; 
+            Theme = theme;
             Image = "path";
-            Theme = "Тема";
         }
 
         [Key]
@@ -28,8 +28,6 @@ namespace Collection.Models
         public string Theme { get; set; }
 
         public string Image { get; set; }
-
-        public int IdOwner { get; set; }
 
         public string Fields { get; set; }
 

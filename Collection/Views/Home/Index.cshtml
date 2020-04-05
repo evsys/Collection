@@ -1,17 +1,124 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
+    @model List<Collection.Models.Item>
+
 }
-@model IEnumerable<Collection.Models.User>
 
+@if (Model.Count == 0)
+{
+    <h2 class="text-info ml-2">Нет элементов</h2>
+}
+else
+{
+<h2 class="text-info ml-2">Последние добавленные элементы</h2>
 
-    <table class="table">
-            @foreach (var user in Model)
-            {
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th scope="col">Название элемента</th>
+            <th scope="col">Теги</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr>
-                <td>@user.Email</td>
+                <th scope="row">@item.Name</th>
+                <th scope="row">@item.Tegs</th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
+                <th scope="row"></th>
                 <td>
-                    <a class="nav-link text-dark" asp-controller="Home" asp-action="UserPage" asp-route-userid="@user.Id">Перейти</a>
+                    <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@item.IdCollection">
+                        <button class="btn btn-primary">
+                            Коллекция
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="UserPage" asp-route-userName="@User.Identity.Name">
+                        <button class="btn btn-primary">
+                            Пользователь
+                        </button>
+                    </form>
                 </td>
             </tr>
-            }
-    </table>    
+        }
+    </tbody>
+</table>
+}
+
+<h2 class="text-info ml-2">Коллекции с наибольшим количеством элементов</h2>
+
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th scope="col">Название коллекции</th>
+            <th scope="col">Описание коллекции</th>
+            <th scope="col">Тема</th>
+            <th scope="col">Количество элементов</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CollectionDb collectionDb in ViewBag.Collections)
+        {
+            <tr>
+                <th scope="row">@collectionDb.Name</th>
+                <td>@collectionDb.Description</td>
+                <td>@collectionDb.Theme</td>
+                <td>@collectionDb.CountItems</td>
+                <td>
+                    <form asp-controller="Home" asp-action="ItemPage" asp-route-id="@collectionDb.Id">
+                        <button class="btn btn-primary">
+                            Коллекция
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="UserPage" asp-route-userName="@User.Identity.Name">
+                        <button class="btn btn-primary">
+                            Пользователь
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

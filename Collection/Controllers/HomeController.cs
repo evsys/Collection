@@ -15,23 +15,42 @@ namespace Collection.Controllers
     public class HomeController : Controller
     {
         private ApplicationContext db;
-        private readonly ILogger<HomeController> _logger;
         UserManager<User> _userManager;
 
-        public HomeController(ApplicationContext context, ILogger<HomeController> logger, UserManager<User> userManager)
+        public HomeController(ApplicationContext context, UserManager<User> userManager)
         {
             db = context;
-            _logger = logger;
             _userManager = userManager;
         }
 
-        public IActionResult Index() => View(_userManager.Users.ToList());
-
-        public async Task<IActionResult> UserPage(string userId)
+        public async Task<IActionResult> Index()
         {
-            User ownerCollections = await _userManager.FindByIdAsync(userId);
-            List<CollectionDb> collectionDb = db.CollectionDbs.Where(x => x.IdUser == ownerCollections.Id).ToList();
-            ViewBag.Name = userId;
+            List<Item> items = db.Items.OrderByDescending(x => x.Id).Take(3).ToList();
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                items[i].Collection = await db.CollectionDbs.FirstOrDefaultAsync(x => x.Id == items[i].IdCollection);
+            }
+
+            List<CollectionDb> collectionDbs = db.CollectionDbs.ToList();
+
+            for (int i = 0; i < collectionDbs.Count; i++)
+            {
+                collectionDbs[i].CountItems = db.Items.Where(item => item.IdCollection == collectionDbs[i].Id).Count();
+            }
+
+            ViewBag.Collections = collectionDbs.OrderByDescending(x => x.CountItems).Take(3);
+
+            return View(items);
+        }
+
+        public IActionResult AllUsers() => View(_userManager.Users.ToList());
+
+        public async Task<IActionResult> UserPage(string userName)
+        {
+            User user = await _userManager.FindByEmailAsync(userName);
+            List<CollectionDb> collectionDb = db.CollectionDbs.Where(x => x.IdUser == user.Id).ToList();
+            ViewBag.OwnerName = user.Email;
             return View(collectionDb);
         }
 
@@ -57,8 +76,19 @@ namespace Collection.Controllers
                 items[0].Collection = collectionDb;
             }
 
-            ViewBag.OwnerCollection = await db.Users.FirstOrDefaultAsync(x => x.Id == collectionDb.IdUser);
+            ViewBag.OwnerName = await db.Users.FirstOrDefaultAsync(x => x.Id == collectionDb.IdUser);
             return View(items);
+        }
+
+        public async Task<IActionResult> Item(int id) 
+        {
+            User user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            Item item = await db.Items.FirstOrDefaultAsync(x => x.Id == id);
+            CollectionDb collection = await db.CollectionDbs.FirstOrDefaultAsync(x => x.Id == item.IdCollection);
+
+            item.Collection = collection;
+            return View(item);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -67,64 +97,18 @@ namespace Collection.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public async Task<IActionResult> Delete(List<string> checkedId)
-        {
-            IQueryable<User> removedUsers = db.Users.Where(user => checkedId.Contains(user.Id));
-
-            List<string> removedEmails = new List<string>();
-
-            foreach (var user in removedUsers)
-            {
-                db.Users.Remove(user);
-            }
-            await db.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public async Task<IActionResult> Lock(List<string> checkedId)
-        {
-            IQueryable<User> users = db.Users.Where(user => checkedId.Contains(user.Id));
-            foreach (var user in users)
-            {
-                user.Status = "Заблокирован";
-            }
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public async Task<IActionResult> Unlock(List<string> checkedId)
-        {
-            IQueryable<User> users = db.Users.Where(user => checkedId.Contains(user.Id));
-            foreach (var user in users)
-            {
-                user.Status = "Разблокирован";
-            }
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> CreateCollection(CollectionModel collectionModel, string userId)
+        public async Task<IActionResult> CreateCollection(CollectionViewModel collectionViewModel)
         {
             List<Field> fields = new List<Field>();
 
-            if (collectionModel.NameField != null)
+            for (int i = 0; i < 3; i++)
             {
-                for (int i = 0; i < collectionModel.NameField.Count; i++)
-                {
-                    fields.Add(new Field(collectionModel.NameField[i], collectionModel.TypeField[i]));
-                }
+                fields.Add(new Field(collectionViewModel.NameField[i], collectionViewModel.TypeField[i]));
             }
 
-            User ownerCollection = await _userManager.FindByIdAsync(userId);
+            User ownerCollection = await db.Users.FirstOrDefaultAsync(u => u.Email == collectionViewModel.NameUser);
 
-            CollectionDb collectionDb = new CollectionDb(collectionModel.NameCollection, collectionModel.Description)
+            CollectionDb collectionDb = new CollectionDb(collectionViewModel.NameCollection, collectionViewModel.Description, collectionViewModel.Theme)
             {
                 User = ownerCollection,
                 IdUser = ownerCollection.Id,
@@ -133,7 +117,17 @@ namespace Collection.Controllers
 
             db.CollectionDbs.Add(collectionDb);
             await db.SaveChangesAsync();
-            return RedirectToAction("UserPage", "Home", new { UserId = ownerCollection.Id });
+            return RedirectToAction("UserPage", "Home", new { userName = ownerCollection.Email });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCollection(int idCollection)
+        {
+            CollectionDb collectionDb = await db.CollectionDbs.FirstOrDefaultAsync(x => x.Id == idCollection);
+            User user = await db.Users.FirstOrDefaultAsync(u => u.Id == collectionDb.IdUser);
+            db.Remove(collectionDb);
+            await db.SaveChangesAsync();
+            return RedirectToAction("UserPage", "Home", new { UserName = user.Email });
         }
 
         public async Task<IActionResult> CreateItem(ItemModel itemModel)
@@ -149,6 +143,16 @@ namespace Collection.Controllers
             db.Items.Add(item);
             await db.SaveChangesAsync();
             return RedirectToAction("ItemPage", "Home", new { Id = item.IdCollection });
+        }
+
+        public async Task<IActionResult> DeleteItem(int idItem)
+        {
+            Item item = await db.Items.FirstOrDefaultAsync(x => x.Id == idItem);
+
+            int collectionId = item.IdCollection;
+            db.Items.Remove(item);
+            await db.SaveChangesAsync();
+            return RedirectToAction("ItemPage", "Home", new { Id = collectionId });
         }
     }
 }

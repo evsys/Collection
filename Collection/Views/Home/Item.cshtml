@@ -1,0 +1,59 @@
+﻿@{
+    @model Collection.Models.Item
+
+    ViewData["Title"] = "Элемент - " + Model.Name;
+}
+
+<table class="table table-responsive-sm">
+    <thead>
+        <tr>
+            <th scope="col">Название элемента</th>
+            @foreach (var item in Model.Collection.FormattedFields)
+            {
+                <th scope="col">@item.Name</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">@Model.Name</th>
+
+            @for (var i = 0; i < 3; i++)
+            {
+                var field = Model.Collection.FormattedFields[i];
+
+                @if (field.Type == "Числовой")
+                {
+                    <th scope="row"><input type="number" readonly value="@Model.FormattedValues[i]"></th>
+                }
+
+                @if (field.Type == "Строковый")
+                {
+                    <th scope="row"><input type="text" readonly value="@Model.FormattedValues[i]"></th>
+                }
+
+                @if (field.Type == "Текстовый")
+                {
+                    <th scope="row"><textarea readonly>@Model.FormattedValues[i]</textarea></th>
+                }
+
+                @if (field.Type == "Дата")
+                {
+                    <th scope="row"><input type="datetime" readonly value="@Model.FormattedValues[i]"></th>
+                }
+
+                @if (field.Type == "Логический")
+                {
+                    @if (Model.FormattedValues[i] == "on")
+                    {
+                        <th scope="row"><input type="checkbox" disabled checked></th>
+                    }
+                    else
+                    {
+                        <th scope="row"><input type="checkbox" disabled></th>
+                    }
+                }
+            }
+        </tr>
+    </tbody>
+</table>

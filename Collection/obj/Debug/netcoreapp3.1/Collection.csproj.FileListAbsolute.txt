@@ -73,3 +73,5 @@ C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\net
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\netcoreapp3.1\Razor\Views\Roles\Index.cshtml.g.cs
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\netcoreapp3.1\Razor\Views\Home\UserPage.cshtml.g.cs
 C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\netcoreapp3.1\Razor\Views\Home\ItemPage.cshtml.g.cs
+C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\netcoreapp3.1\Razor\Views\Home\Item.cshtml.g.cs
+C:\Users\mmorf\Desktop\Новая папка\Collection\Collection\obj\Debug\netcoreapp3.1\Razor\Views\Home\AllUsers.cshtml.g.cs
