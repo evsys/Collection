@@ -1,5 +1,6 @@
 ﻿document.querySelector('#addTeg').addEventListener('click', e => {
     e.preventDefault();
+    console.log('hi');
     const text = document.querySelector('#allTegs').value;
     const value = document.querySelector('#oneTag').value;
     if (value != "") {

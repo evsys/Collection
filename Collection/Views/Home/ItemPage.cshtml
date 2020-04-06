@@ -8,7 +8,7 @@
     }
 }
 
-@if (Model.Count == 0)
+@if ((Model.Count == 1 && Model[0].Id == 0))
 {
     <p class="text-danger m-2">Коллекция пуста</p>
 }
@@ -111,7 +111,6 @@ else
                         <button id="addTeg" class="btn btn-primary mt-2">Добавить Тэг</button>
                         <p>Тэги</p>
                         <input type="text" name="tegs" id="allTegs" class="form-control" readonly>
-                        <p>Заполните поля</p>
                         @for (var i = 0; i < 3; i++)
                         {
                             var field = Model[0].Collection.FormattedFields[i];
